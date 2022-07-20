@@ -1,10 +1,7 @@
 package com.shop.footwear.security;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -23,7 +20,7 @@ public class MyUserDetails implements UserDetails {
 	private String username;
 	private String password;
 	private boolean enable;
-	private List<GrantedAuthority> role;
+	private GrantedAuthority role;
 	
 	
 	public boolean isEnable() {
@@ -43,29 +40,24 @@ public class MyUserDetails implements UserDetails {
 		this.password = password;
 	}
 
-	public List<GrantedAuthority> getRole() {
+	public GrantedAuthority getRole() {
 		return role;
 	}
 
-	public void setRole(List<GrantedAuthority> role) {
+	public void setRole(GrantedAuthority role) {
 		this.role = role;
 	}
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return this.role;
+		return Collections.singleton(this.role);
 	}
 
 	public MyUserDetails(User user) {
 		this.username = user.getUsername();
 		this.password = user.getPassword();
 		this.enable = user.isEnable();
-		
-		user.setRole("ROLE_"+user.getRole());
-		
-		this.role = Arrays.stream(user.getRole().split(","))
-				.map(SimpleGrantedAuthority::new)
-				.collect(Collectors.toList());
+		this.role = new SimpleGrantedAuthority("ROLE_"+user.getRole().getName());
 	}
 	
 	@Override
