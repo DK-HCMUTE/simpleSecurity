@@ -1,5 +1,6 @@
 package com.shop.footwear.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,7 +16,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	Optional<User> findByUsername(String username);
 
 	@Query("SELECT r FROM Role r INNER JOIN r.users u WHERE u = ?1")
-	Role findRoleByUser(User user);
+	List<Role> findRoleByUser(User user);
 
 
 }

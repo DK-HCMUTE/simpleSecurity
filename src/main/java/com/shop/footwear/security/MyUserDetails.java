@@ -1,7 +1,9 @@
 package com.shop.footwear.security;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -9,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import com.shop.footwear.entity.Role;
 import com.shop.footwear.entity.User;
 
 public class MyUserDetails implements UserDetails {
@@ -20,7 +23,7 @@ public class MyUserDetails implements UserDetails {
 	private String username;
 	private String password;
 	private boolean enable;
-	private GrantedAuthority role;
+	private List<GrantedAuthority> roles = new ArrayList<>();
 	
 	
 	public boolean isEnable() {
@@ -40,24 +43,29 @@ public class MyUserDetails implements UserDetails {
 		this.password = password;
 	}
 
-	public GrantedAuthority getRole() {
-		return role;
+	public List<GrantedAuthority> getRole() {
+		return roles;
 	}
 
-	public void setRole(GrantedAuthority role) {
-		this.role = role;
+	public void setRole(List<GrantedAuthority> roles) {
+		this.roles = roles;
 	}
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return Collections.singleton(this.role);
+		return this.roles;
 	}
 
 	public MyUserDetails(User user) {
 		this.username = user.getUsername();
 		this.password = user.getPassword();
 		this.enable = user.isEnable();
-		this.role = new SimpleGrantedAuthority("ROLE_"+user.getRole().getName());
+		
+		List<Role> rolesFetch = user.getRoles();
+		for (Role role : rolesFetch) {
+			this.roles.add(new SimpleGrantedAuthority("ROLE_"+role.getName()));
+		}
+		
 	}
 	
 	@Override

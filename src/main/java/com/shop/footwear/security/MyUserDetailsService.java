@@ -1,5 +1,6 @@
 package com.shop.footwear.security;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,10 +27,8 @@ public class MyUserDetailsService implements UserDetailsService {
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		Optional<User> userOpt = userRepository.findByUsername(username);
 		User user = userOpt.get();
-		Role role = userRepository.findRoleByUser(user);
-		
-		user.setRole(role);
-		
+		List<Role> role = userRepository.findRoleByUser(user);
+		user.setRoles(role);
 		return new MyUserDetails(user);
 	}
 
